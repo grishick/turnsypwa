@@ -1,0 +1,8 @@
+{
+  "name": "turnsydapp1",
+  "app_id": "947e8bc2",
+  "type": "ionic-angular",
+  "integrations": {
+    "cordova": {}
+  }
+}

@@ -1,0 +1,33 @@
+<!--
+  Generated template for the FriendsPage page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Friends</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <ion-refresher (ionRefresh)="refreshFriendsTapped($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-item>
+    {{coinName}}
+    <ion-badge item-end>{{coinBalance}}</ion-badge>
+  </ion-item>
+  <ion-item><button ion-button secondary (click)="addFriendTapped($event)">Add Friend</button></ion-item>
+  <ion-list>
+    <ion-list-header>
+      Tap friend's name to see balances of favors
+    </ion-list-header>
+    <button ion-item *ngFor="let item of items" (click)="itemTapped($event, item)">
+        <h2>{{item.title}}</h2>
+    </button>
+  </ion-list>
+</ion-content>

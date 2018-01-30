@@ -1,0 +1,39 @@
+<ion-header>
+  <ion-navbar>
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>{{friendName}}</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-refresher (ionRefresh)="refreshFavorsTapped($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
+  <ion-list #favorList>
+    <ion-list-header>
+      Slide left over favor name to see options
+    </ion-list-header>
+    <ion-item-sliding *ngFor="let item of items" #{{item.favorName}}>
+      <ion-item ion-item>
+        <h2>{{item.title}}</h2>
+        <p>{{item.note}}</p>
+      </ion-item>
+      <ion-item-options side="right">
+        <button ion-button color="primary" (click)="sendTapped($event, item)" icon-start>
+          <ion-icon name="send"></ion-icon>
+          {{item.minusLabel}}
+        </button>
+        <button ion-button color="primary" (click)="requestConfirmationTapped($event, item)" icon-start>
+          <ion-icon name="send"></ion-icon>
+          {{item.plusLabel}}
+        </button>
+      </ion-item-options>
+    </ion-item-sliding>
+  </ion-list>
+  <div padding>
+    <ion-input placeholder="Name of new favor" clearInput [(ngModel)]="newFavorName"></ion-input>
+    <button ion-button color="primary" (click)="addFavorTapped($event)" block>Add Favor</button>
+  </div>
+</ion-content>

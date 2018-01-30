@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+.idea/
+node_modules/
+www/
+src/.DS_Store
+platforms/
+plugins/
+ios builds/
+turnsy.keystore
