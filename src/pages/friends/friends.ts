@@ -18,9 +18,11 @@ export class FriendsPage {
   @ViewChild(List) list: List;
   coinName:string;
   coinBalance:number;
+  errorMessage:string;
   items: Array<{title: string, address: string}>;
   constructor(public navCtrl: NavController, public navParams: NavParams, private ethProvider: EthnetworkProvider) {
     var context = this;
+    context.errorMessage = "";
   }
 
   processFriends(friends) {
@@ -49,21 +51,32 @@ export class FriendsPage {
   }
   loadFriendList() {
     var context = this;
-    context.ethProvider.initAll(function() {
-      context.ethProvider.initAccount(function (error) {
-        if (error) {
-          console.log("Need to login");
-        } else {
-          context.ethProvider.getFriends((error, friends) => {
-            context.processFriends(friends);
-            context.coinName = context.ethProvider.ethContractMeta.token_name;
-            context.ethProvider.getTokenBalance().then(balanceOfToken => {
-              console.log("balance of", context.coinName, balanceOfToken);
-              context.coinBalance = balanceOfToken;
+    context.ethProvider.initAll(function(error) {
+      if (error) {
+        console.log("Failed to initialize");
+        context.errorMessage = "Failed to initialize: " + error;
+      } else {
+        context.ethProvider.initAccount(function (error) {
+          if (error) {
+            console.log("Need to login");
+            context.errorMessage = "Failed to login: " + error;
+          } else {
+            context.ethProvider.getFriends((error, friends) => {
+              if(error) {
+                context.errorMessage = "Failed to load friends: " + error;
+              } else {
+                context.processFriends(friends);
+                context.coinName = context.ethProvider.ethContractMeta.token_name;
+                context.ethProvider.getTokenBalance().then(balanceOfToken => {
+                  console.log("balance of", context.coinName, balanceOfToken);
+                  context.coinBalance = balanceOfToken;
+                })
+              }
+
             })
-          })
-        }
-      });
+          }
+        });
+      }
     });
   }
   ionViewDidEnter() {

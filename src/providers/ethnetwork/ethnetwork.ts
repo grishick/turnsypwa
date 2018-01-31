@@ -101,58 +101,58 @@ export class EthnetworkProvider {
     } else {
       var context = this;
 
-      if(typeof web3 === 'undefined') {
-        web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
-      }
       try {
-          context.provider = web3.currentProvider;
-          context.localEth = new Eth(context.provider);
-          context.localWeb3 = new Web3(context.provider);
-          context.localWeb3.eth.getAccounts(function(error, accounts) {
-            if(error) {
-              cb(error);
-            } else if(accounts && accounts[0]) {
-              context.myAddress = accounts[0];
-              var contract = new EthContract(context.localEth);
-              context.pendingTransactions = {};
+        if(typeof web3 === 'undefined') {
+          web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+        }
+        context.provider = web3.currentProvider;
+        context.localEth = new Eth(context.provider);
+        context.localWeb3 = new Web3(context.provider);
+        context.localWeb3.eth.getAccounts(function(error, accounts) {
+          if(error) {
+            cb(error);
+          } else if(accounts && accounts[0]) {
+            context.myAddress = accounts[0];
+            var contract = new EthContract(context.localEth);
+            context.pendingTransactions = {};
 
-              var FavToken = contract(context.ethContractMeta.abi, context.ethContractMeta.unlinked_binary, {from:context.myAddress, gas:300000});
-              context.ethContract = FavToken.at(context.ethContractMeta.address);
-              console.log("Instantiated coin contract at ", context.ethContractMeta.address);
-              context.accountReady = true;
-              console.log("Initialized account ", context.myAddress);
-              context.getFriends(function(error, friends) {
-                if(error) {
-                  cb(error, context.myAddress);
-                } else {
-                  context.getFavorNames(true).then((result) => {
-                    context._updatePendingTransactions(function(error) {
-                      if(error) {
-                        cb(error, context.myAddress);
-                      } else {
-                        var friendList: Array<string> = new Array<string>();
-                        if (context.friends) {
-                          context.friends.forEach(function (v, k, m) {
-                            v.scores = {};
-                            v.confirmations = {};
-                            context.friends.set(k, v);
-                            friendList.push(k);
-                          });
-                        }
-                        context.getScores(0, friendList, function (error, friends) {
-                          cb(error, context.myAddress);
+            var FavToken = contract(context.ethContractMeta.abi, context.ethContractMeta.unlinked_binary, {from:context.myAddress, gas:300000});
+            context.ethContract = FavToken.at(context.ethContractMeta.address);
+            console.log("Instantiated coin contract at ", context.ethContractMeta.address);
+            context.accountReady = true;
+            console.log("Initialized account ", context.myAddress);
+            context.getFriends(function(error, friends) {
+              if(error) {
+                cb(error, context.myAddress);
+              } else {
+                context.getFavorNames(true).then((result) => {
+                  context._updatePendingTransactions(function(error) {
+                    if(error) {
+                      cb(error, context.myAddress);
+                    } else {
+                      var friendList: Array<string> = new Array<string>();
+                      if (context.friends) {
+                        context.friends.forEach(function (v, k, m) {
+                          v.scores = {};
+                          v.confirmations = {};
+                          context.friends.set(k, v);
+                          friendList.push(k);
                         });
                       }
-                    })
-                  }).catch((error) => {
-                    cb(error, context.myAddress);
-                  });
-                }
-              })
-            } else {
-              cb("Could not load accounts asynchronously");
-            }
-          });
+                      context.getScores(0, friendList, function (error, friends) {
+                        cb(error, context.myAddress);
+                      });
+                    }
+                  })
+                }).catch((error) => {
+                  cb(error, context.myAddress);
+                });
+              }
+            })
+          } else {
+            cb("Could not load accounts asynchronously");
+          }
+        });
       } catch (err) {
         cb(err);
       }
