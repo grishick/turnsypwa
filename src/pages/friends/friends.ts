@@ -21,7 +21,6 @@ export class FriendsPage {
   items: Array<{title: string, address: string}>;
   constructor(public navCtrl: NavController, public navParams: NavParams, private ethProvider: EthnetworkProvider) {
     var context = this;
-    context.loadFriendList();
   }
 
   processFriends(friends) {
