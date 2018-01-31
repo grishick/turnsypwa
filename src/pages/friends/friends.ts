@@ -66,8 +66,8 @@ export class FriendsPage {
       });
     });
   }
-  ionViewDidLoad() {
-    console.log("ionViewDidLoad")
+  ionViewDidEnter() {
+    console.log("ionViewDidEnter")
     this.loadFriendList();
   }
 
