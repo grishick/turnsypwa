@@ -100,8 +100,11 @@ export class EthnetworkProvider {
       cb(null, this.myAddress);
     } else {
       var context = this;
-      if (web3) {
-        if(typeof web3 !== 'undefined') {
+
+      if(typeof web3 === 'undefined') {
+        web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'));
+      }
+      try {
           context.provider = web3.currentProvider;
           context.localEth = new Eth(context.provider);
           context.localWeb3 = new Web3(context.provider);
@@ -150,10 +153,8 @@ export class EthnetworkProvider {
               cb("Could not load accounts asynchronously");
             }
           });
-        }
-      } else {
-        console.log('Seed is missing');
-        cb("SEED_MISSING");
+      } catch (err) {
+        cb(err);
       }
     }
   }
