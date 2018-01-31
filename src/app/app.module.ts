@@ -11,7 +11,7 @@ import { IonicStorageModule } from '@ionic/storage';
 import { QRCodeModule } from 'angular2-qrcode';
 import { Pro } from '@ionic/pro';
 
-const IonicPro = Pro.init('947e8bc2', {
+const IonicPro = Pro.init('70677f09', {
   appVersion: "0.1.0"
 });
 
