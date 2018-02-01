@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, List } from 'ionic-angular';
+import { NavController, NavParams, List, ToastController } from 'ionic-angular';
 import { EthnetworkProvider } from '../../providers/ethnetwork/ethnetwork';
 import { AddfriendPage } from '../addfriend/addfriend';
 import { ListPage } from '../list/list';
@@ -18,11 +18,9 @@ export class FriendsPage {
   @ViewChild(List) list: List;
   coinName:string;
   coinBalance:number;
-  errorMessage:string;
   items: Array<{title: string, address: string}>;
-  constructor(public navCtrl: NavController, public navParams: NavParams, private ethProvider: EthnetworkProvider) {
-    var context = this;
-    context.errorMessage = "";
+  constructor(public navCtrl: NavController, public toastCtrl: ToastController, public navParams: NavParams, private ethProvider: EthnetworkProvider) {
+
   }
 
   processFriends(friends) {
@@ -49,38 +47,49 @@ export class FriendsPage {
       }
     })
   }
+
+  showToast(msg:string, duration:number) {
+    var toast = this.toastCtrl.create({
+      message: msg,
+      showCloseButton: true,
+      duration: duration,
+      position: 'top'
+    });
+    toast.present();
+  }
   loadFriendList() {
     var context = this;
     context.ethProvider.initAll(function(error) {
       if (error) {
         console.log("Failed to initialize");
-        context.errorMessage = "Failed to initialize: " + error;
+        context.showToast("Failed to initialize: " + error, 3000);
       } else {
+        context.showToast("Please wait", 2000);
         context.ethProvider.initAccount(function (error) {
           if (error) {
             console.log("Need to login");
-            context.errorMessage = "Failed to login: " + error;
+            context.showToast("Failed to login: " + error, 3000);
           } else {
             context.ethProvider.getFriends((error, friends) => {
               if(error) {
-                context.errorMessage = "Failed to load friends: " + error;
+                context.showToast("Failed to load friends: " + error, 3000);
               } else {
                 context.processFriends(friends);
                 context.coinName = context.ethProvider.ethContractMeta.token_name;
                 context.ethProvider.getTokenBalance().then(balanceOfToken => {
                   console.log("balance of", context.coinName, balanceOfToken);
                   context.coinBalance = balanceOfToken;
+                  context.showToast("All done", 1000);
                 })
               }
-
             })
           }
         });
       }
     });
   }
-  ionViewDidEnter() {
-    console.log("ionViewDidEnter")
+  ionViewWillEnter() {
+    console.log("ionViewWillEnter")
     this.loadFriendList();
   }
 
